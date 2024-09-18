@@ -1,6 +1,3 @@
-
 export default function Actions() {
-  return (
-    <div>Actions</div>
-  )
+  return <div>Actions</div>;
 }

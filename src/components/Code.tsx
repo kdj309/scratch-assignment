@@ -1,6 +1,3 @@
-
 export default function Code() {
-  return (
-    <div>Code</div>
-  )
+  return <div>Code</div>;
 }

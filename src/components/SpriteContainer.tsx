@@ -1,6 +1,3 @@
-
 export default function SpriteContainer() {
-  return (
-    <div>SpriteContainer</div>
-  )
+  return <div>SpriteContainer</div>;
 }

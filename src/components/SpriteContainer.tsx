@@ -1,3 +1,5 @@
+import { Box } from '@mui/material';
+
 export default function SpriteContainer() {
-  return <div>SpriteContainer</div>;
+  return <Box>SpriteContainer</Box>;
 }

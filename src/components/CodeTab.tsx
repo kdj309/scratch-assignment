@@ -8,8 +8,8 @@ import CodeOutlinedIcon from '@mui/icons-material/CodeOutlined';
 import { Stack, Typography } from '@mui/material';
 import Brightness1Icon from '@mui/icons-material/Brightness1';
 import { useState } from 'react';
-const actions = ['Move X Steps', 'Turn X degree', 'Go To X and Y Direction'];
-const controls = ['Repeat Animation'];
+import { actions, controls } from '../utils/constants';
+
 export default function CodeTab() {
   const [actionCurrentTab, setActionCurrentTab] = React.useState(0);
   const [actionCategoryTab, setActionCategoryTab] = React.useState(0);
@@ -23,7 +23,7 @@ export default function CodeTab() {
   const [degreeValue, setDegreeValue] = useState<number>(45);
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', borderRight: '1px solid hsl(0deg 0% 0% / 15%)' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={actionCurrentTab} onChange={handleActionTab} aria-label='code section'>
           <Tab
@@ -52,7 +52,7 @@ export default function CodeTab() {
                 <Typography variant='subtitle2'>
                   <Stack direction='column' justifyContent='center' alignContent='center'>
                     <div>
-                      <Brightness1Icon color='primary' />
+                      <Brightness1Icon color='primary' fontSize='small' />
                     </div>
                     <span>Motion</span>
                   </Stack>
@@ -65,7 +65,7 @@ export default function CodeTab() {
                 <Typography variant='subtitle2'>
                   <Stack direction='column' justifyContent='center' alignContent='center'>
                     <div>
-                      <Brightness1Icon color='warning' />
+                      <Brightness1Icon color='warning' fontSize='small' />
                     </div>
                     <span>Controlls</span>
                   </Stack>

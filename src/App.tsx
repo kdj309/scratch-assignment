@@ -15,10 +15,10 @@ function App() {
           <Grid size={3}>
             <Code></Code>
           </Grid>
-          <Grid size={6}>
+          <Grid size={5}>
             <Actions></Actions>
           </Grid>
-          <Grid size={3}>
+          <Grid size={4}>
             <SpriteContainer></SpriteContainer>
           </Grid>
         </Grid>

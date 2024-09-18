@@ -1,3 +1,9 @@
+import CodeTab from './CodeTab';
+
 export default function Code() {
-  return <div>Code</div>;
+  return (
+    <>
+      <CodeTab></CodeTab>
+    </>
+  );
 }

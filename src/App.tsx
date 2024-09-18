@@ -11,7 +11,7 @@ function App() {
     <>
       <Stack direction='column' gap={4}>
         <Navbar></Navbar>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} sx={{ height: 'calc(100vh - 95px)' }}>
           <Grid size={2}>
             <Code></Code>
           </Grid>

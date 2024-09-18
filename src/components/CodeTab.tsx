@@ -7,18 +7,20 @@ import CustomTabPanel from './UI/TabPanel';
 import CodeOutlinedIcon from '@mui/icons-material/CodeOutlined';
 import { Stack, Typography } from '@mui/material';
 import Brightness1Icon from '@mui/icons-material/Brightness1';
+import { useState } from 'react';
 const actions = ['Move X Steps', 'Turn X degree', 'Go To X and Y Direction'];
 const controls = ['Repeat Animation'];
 export default function CodeTab() {
   const [actionCurrentTab, setActionCurrentTab] = React.useState(0);
   const [actionCategoryTab, setActionCategoryTab] = React.useState(0);
-
   const handleActionTab = (_: React.SyntheticEvent, newValue: number) => {
     setActionCurrentTab(newValue);
   };
   const handleActionCategoryTab = (_: React.SyntheticEvent, newValue: number) => {
     setActionCategoryTab(newValue);
   };
+  const [stepsCount, setStepsCount] = useState<number>(5);
+  const [degreeValue, setDegreeValue] = useState<number>(45);
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -30,6 +32,7 @@ export default function CodeTab() {
                 <CodeOutlinedIcon /> Code
               </Typography>
             }
+            className='tw-mx-auto'
             {...a11yProps(0)}
           />
         </Tabs>
@@ -76,11 +79,40 @@ export default function CodeTab() {
               <Box>
                 <Typography variant='subtitle2'>Motion</Typography>
                 <Stack direction='column' marginY={2} gap={2}>
-                  {actions.map((item, i) => (
-                    <Box sx={{ backgroundColor: '#1976d2', p: 1, color: 'white' }} key={`${item}${i}`}>
-                      <Typography variant='body2'>{item}</Typography>
+                  <Box
+                    sx={{ backgroundColor: '#1976d2', p: 1, color: 'white', borderRadius: '9px' }}
+                    key={`${actions[0]}`}
+                  >
+                    <Typography variant='body2'>Move {stepsCount} steps</Typography>
+                    <Box>
+                      <label htmlFor='stepscount'>X:</label>
+                      <input
+                        id='stepscount'
+                        defaultValue={stepsCount}
+                        value={stepsCount}
+                        type='number'
+                        onChange={(e) => setStepsCount(parseInt(e.target.value))}
+                        className='tw-w-36 tw-text-black tw-px-1 tw-border-r-4'
+                      />
                     </Box>
-                  ))}
+                  </Box>
+                  <Box
+                    sx={{ backgroundColor: '#1976d2', p: 1, color: 'white', borderRadius: '9px' }}
+                    key={`${actions[0]}`}
+                  >
+                    <Typography variant='body2'>Turn {degreeValue} degree</Typography>
+                    <Box>
+                      <label htmlFor='degreevalue'>X:</label>
+                      <input
+                        id='degreevalue'
+                        defaultValue={degreeValue}
+                        value={degreeValue}
+                        type='number'
+                        onChange={(e) => setDegreeValue(parseInt(e.target.value))}
+                        className='tw-w-36 tw-text-black tw-px-1 tw-border-r-4'
+                      />
+                    </Box>
+                  </Box>
                 </Stack>
               </Box>
             </Stack>

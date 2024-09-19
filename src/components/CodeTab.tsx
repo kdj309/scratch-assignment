@@ -10,6 +10,7 @@ import Brightness1Icon from '@mui/icons-material/Brightness1';
 import MoveInput from './MoveInput';
 import RotateInput from './RotateInput';
 import { controls } from '../utils/constants';
+import MoveToXandY from './MoveToXandY';
 
 export default function CodeTab() {
   const [actionCurrentTab, setActionCurrentTab] = React.useState(0);
@@ -80,6 +81,7 @@ export default function CodeTab() {
                 <Stack direction='column' marginY={2} gap={2}>
                   <MoveInput />
                   <RotateInput />
+                  <MoveToXandY />
                 </Stack>
               </Box>
             </Stack>

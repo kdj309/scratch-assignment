@@ -27,6 +27,7 @@ export interface sprite {
   isActive: boolean;
   activeActions: activeAction[];
   image: HTMLImageElement;
+  rotation: number;
 }
 export interface actionsContext {
   sprites: sprite[];

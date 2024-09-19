@@ -30,6 +30,7 @@ export const ActionContextWrapper: FunctionComponent<contextWrapperProps> = ({ c
           size: 200,
           visible: true,
           isActive: true,
+          rotation: 0,
         },
       ]);
     }

@@ -18,6 +18,26 @@ export default function SpriteContainer() {
     setvisible(newValue);
     setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, visible: newValue } : s)));
   };
+  // switch (currentAction.category) {
+  //   case 'Move X Steps':
+  //     updatedSprite.x += currentAction.inputs[0];
+  //     break;
+  //   case 'Rotate X degree':
+  //     updatedSprite.rotation = (updatedSprite.rotation || 0) + currentAction.inputs[0];
+  //     break;
+  //   case 'Go To X and Y':
+  //     updatedSprite.x = currentAction.inputs[0];
+  //     updatedSprite.y = currentAction.inputs[1];
+  //     break;
+  //   default:
+  //     break;
+  // }
+  const executeActions = (spriteId: string) => {
+    // Start the recursive call
+  };
+
+  // Play button onClick handler
+  <button onClick={() => executeActions('cat')}>Run Actions</button>;
 
   return (
     <Stack>
@@ -30,10 +50,22 @@ export default function SpriteContainer() {
           paddingInline={'0.2rem'}
         >
           <Typography variant='subtitle1'>Sprite</Typography>
-          <Button>
-            <PlayCircleFilledOutlinedIcon />
-            <StopCircleOutlinedIcon></StopCircleOutlinedIcon>
-          </Button>
+          {activeSprite?.name ? (
+            <>
+              <Button
+                onClick={() => {
+                  executeActions(activeSprite?.id);
+                }}
+              >
+                <PlayCircleFilledOutlinedIcon />
+              </Button>
+              <Button>
+                <StopCircleOutlinedIcon></StopCircleOutlinedIcon>
+              </Button>
+            </>
+          ) : (
+            <></>
+          )}
         </Stack>
       </Box>
       {activeSprite?.name && (
@@ -48,6 +80,7 @@ export default function SpriteContainer() {
                   visible={activeSprite?.visible}
                   scaleX={Math.min(50, activeSprite?.size / maxSize)}
                   scaleY={Math.min(50, activeSprite?.size / maxCanvasHeight)}
+                  rotation={activeSprite.rotation}
                 />
               </Layer>
             </Stage>

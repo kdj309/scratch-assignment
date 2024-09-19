@@ -17,7 +17,18 @@ export interface activeAction {
   category: string;
   inputs: number[];
 }
-export interface actionsContext {
+export interface sprite {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  visible: boolean;
+  size: number;
+  isActive: boolean;
   activeActions: activeAction[];
-  setActiveActions: Dispatch<SetStateAction<activeAction[]>>;
+  image: HTMLImageElement;
+}
+export interface actionsContext {
+  sprites: sprite[];
+  setSprites: Dispatch<SetStateAction<sprite[]>>;
 }

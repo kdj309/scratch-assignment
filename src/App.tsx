@@ -3,25 +3,27 @@ import './App.css';
 import Actions from './components/Actions';
 import Code from './components/Code';
 import SpriteContainer from './components/SpriteContainer';
-import { Stack } from '@mui/material';
+import { Container, Stack } from '@mui/material';
 import Navbar from './components/Navbar';
 
 function App() {
   return (
     <>
-      <Stack direction='column' gap={2}>
+      <Stack direction='column'>
         <Navbar></Navbar>
-        <Grid container spacing={2} sx={{ height: 'calc(100vh - 95px)' }}>
-          <Grid size={3}>
-            <Code></Code>
+        <Container sx={{ backgroundColor: 'hsl(216deg 100% 95.1%)' }} maxWidth='xl'>
+          <Grid container spacing={2} sx={{ height: 'calc(100vh - 65px)' }}>
+            <Grid size={3} sx={{ backgroundColor: '#f9f9f9' }}>
+              <Code></Code>
+            </Grid>
+            <Grid size={5} sx={{ backgroundColor: '#f9f9f9' }}>
+              <Actions></Actions>
+            </Grid>
+            <Grid size={4} sx={{ backgroundColor: 'white' }}>
+              <SpriteContainer></SpriteContainer>
+            </Grid>
           </Grid>
-          <Grid size={5}>
-            <Actions></Actions>
-          </Grid>
-          <Grid size={4}>
-            <SpriteContainer></SpriteContainer>
-          </Grid>
-        </Grid>
+        </Container>
       </Stack>
     </>
   );

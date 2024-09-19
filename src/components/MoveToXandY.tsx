@@ -9,7 +9,7 @@ export default function MoveToXandY() {
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: 'action',
-      item: { xcount, ycount },
+      item: { category: 'Go To X and Y', inputs: [xcount, ycount] },
       collect(monitor) {
         return {
           isDragging: !!monitor.isDragging(),

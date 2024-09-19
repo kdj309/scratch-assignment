@@ -8,7 +8,7 @@ export default function RotateInput() {
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: 'action',
-      item: { degreeValue },
+      item: { category: 'Rotate X degree', inputs: [degreeValue] },
       collect(monitor) {
         return {
           isDragging: !!monitor.isDragging(),

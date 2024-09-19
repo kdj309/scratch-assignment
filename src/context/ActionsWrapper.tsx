@@ -1,5 +1,5 @@
 import { createContext, FunctionComponent, useContext, useState } from 'react';
-import { actionsContext, activeActions, contextWrapperProps } from '../utils/types';
+import { actionsContext, activeAction, contextWrapperProps } from '../utils/types';
 
 export const ActionsContext = createContext<actionsContext>({
   activeActions: [],
@@ -11,7 +11,7 @@ export const useActionsContext = () => {
 };
 
 export const ActionContextWrapper: FunctionComponent<contextWrapperProps> = ({ children }) => {
-  const [activeActions, setActiveActions] = useState<activeActions[]>([]);
+  const [activeActions, setActiveActions] = useState<activeAction[]>([]);
 
   return <ActionsContext.Provider value={{ activeActions, setActiveActions }}>{children}</ActionsContext.Provider>;
 };

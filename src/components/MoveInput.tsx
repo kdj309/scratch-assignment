@@ -8,7 +8,7 @@ export default function MoveInput() {
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: 'action',
-      item: { stepsCount },
+      item: { category: 'Move X Steps', inputs: [stepsCount] },
       collect(monitor) {
         return {
           isDragging: !!monitor.isDragging(),

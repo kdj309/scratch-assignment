@@ -13,11 +13,11 @@ export interface TabPanelProps {
   index: number;
   value: number;
 }
-export interface activeActions {
+export interface activeAction {
   category: string;
   inputs: number[];
 }
 export interface actionsContext {
-  activeActions: activeActions[];
-  setActiveActions: Dispatch<SetStateAction<activeActions[]>>;
+  activeActions: activeAction[];
+  setActiveActions: Dispatch<SetStateAction<activeAction[]>>;
 }

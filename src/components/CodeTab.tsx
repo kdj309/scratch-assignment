@@ -38,7 +38,7 @@ export default function CodeTab() {
         </Tabs>
       </Box>
       <CustomTabPanel value={actionCurrentTab} index={0}>
-        <Box sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', padding: '12px' }}>
+        <Box sx={{ flexGrow: 1, display: 'flex', padding: '12px' }}>
           <Tabs
             orientation='vertical'
             variant='scrollable'

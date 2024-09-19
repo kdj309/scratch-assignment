@@ -36,98 +36,100 @@ export default function SpriteContainer() {
           </Button>
         </Stack>
       </Box>
-      <Box width={'100%'} sx={{ height: '100%' }}>
-        <Stack direction={'column'} gap={2}>
-          <Stage width={500} height={400}>
-            <Layer>
-              <Image
-                image={activeSprite?.image}
-                x={activeSprite?.x}
-                y={activeSprite?.y}
-                visible={activeSprite?.visible}
-                scaleX={Math.min(1, activeSprite?.size / maxSize)}
-                scaleY={Math.min(1, activeSprite?.size / maxCanvasHeight)}
-              />
-            </Layer>
-          </Stage>
-          <Box>
-            <Stack direction='row' marginBlock={1}>
-              <TextField
-                InputLabelProps={{ shrink: true }}
-                variant='standard'
-                size='small'
-                label='Sprite'
-                value={activeSprite?.name}
-                onChange={(e) =>
-                  setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, name: e.target.value } : s)))
-                }
-              ></TextField>
-              <TextField
-                InputLabelProps={{ shrink: true }}
-                type='number'
-                variant='standard'
-                size='small'
-                label={
-                  <span>
-                    <SwapHorizOutlinedIcon fontSize='small' />X
-                  </span>
-                }
-                value={activeSprite?.x}
-                onChange={(e) =>
-                  setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, x: parseInt(e.target.value) } : s)))
-                }
-              ></TextField>
-              <TextField
-                InputLabelProps={{ shrink: true }}
-                type='number'
-                variant='standard'
-                size='small'
-                label={
-                  <span>
-                    <HeightOutlinedIcon fontSize='small' />Y
-                  </span>
-                }
-                value={activeSprite?.y}
-                onChange={(e) =>
-                  setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, y: parseInt(e.target.value) } : s)))
-                }
-              ></TextField>
-            </Stack>
-            <Stack direction='row' justifyContent='space-evenly'>
-              <ToggleButtonGroup
-                size='small'
-                value={visible}
-                exclusive
-                onChange={handleVisibility}
-                aria-label='text alignment'
-              >
-                <ToggleButton size='small' value={false} aria-label='left aligned'>
-                  <VisibilityOffOutlinedIcon fontSize='small' />
-                </ToggleButton>
-                <ToggleButton size='small' value={true} aria-label='centered'>
-                  <VisibilityOutlinedIcon fontSize='small' />
-                </ToggleButton>
-              </ToggleButtonGroup>
-              <Box>
+      {activeSprite?.name && (
+        <Box width={'100%'} sx={{ height: '100%' }}>
+          <Stack direction={'column'} gap={2}>
+            <Stage width={500} height={400}>
+              <Layer>
+                <Image
+                  image={activeSprite?.image}
+                  x={activeSprite?.x}
+                  y={activeSprite?.y}
+                  visible={activeSprite?.visible}
+                  scaleX={Math.min(50, activeSprite?.size / maxSize)}
+                  scaleY={Math.min(50, activeSprite?.size / maxCanvasHeight)}
+                />
+              </Layer>
+            </Stage>
+            <Box>
+              <Stack direction='row' marginBlock={1}>
+                <TextField
+                  InputLabelProps={{ shrink: true }}
+                  variant='standard'
+                  size='small'
+                  label='Sprite'
+                  value={activeSprite?.name}
+                  onChange={(e) =>
+                    setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, name: e.target.value } : s)))
+                  }
+                ></TextField>
                 <TextField
                   InputLabelProps={{ shrink: true }}
                   type='number'
                   variant='standard'
                   size='small'
-                  label='size'
-                  value={activeSprite?.size}
-                  onChange={(e) =>
-                    setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, size: parseInt(e.target.value) } : s)))
+                  label={
+                    <span>
+                      <SwapHorizOutlinedIcon fontSize='small' />X
+                    </span>
                   }
-                  onBlur={(e) =>
-                    setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, size: parseInt(e.target.value) } : s)))
+                  value={activeSprite?.x}
+                  onChange={(e) =>
+                    setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, x: parseInt(e.target.value) } : s)))
                   }
                 ></TextField>
-              </Box>
-            </Stack>
-          </Box>
-        </Stack>
-      </Box>
+                <TextField
+                  InputLabelProps={{ shrink: true }}
+                  type='number'
+                  variant='standard'
+                  size='small'
+                  label={
+                    <span>
+                      <HeightOutlinedIcon fontSize='small' />Y
+                    </span>
+                  }
+                  value={activeSprite?.y}
+                  onChange={(e) =>
+                    setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, y: parseInt(e.target.value) } : s)))
+                  }
+                ></TextField>
+              </Stack>
+              <Stack direction='row' justifyContent='space-evenly'>
+                <ToggleButtonGroup
+                  size='small'
+                  value={visible}
+                  exclusive
+                  onChange={handleVisibility}
+                  aria-label='text alignment'
+                >
+                  <ToggleButton size='small' value={false} aria-label='left aligned'>
+                    <VisibilityOffOutlinedIcon fontSize='small' />
+                  </ToggleButton>
+                  <ToggleButton size='small' value={true} aria-label='centered'>
+                    <VisibilityOutlinedIcon fontSize='small' />
+                  </ToggleButton>
+                </ToggleButtonGroup>
+                <Box>
+                  <TextField
+                    InputLabelProps={{ shrink: true }}
+                    type='number'
+                    variant='standard'
+                    size='small'
+                    label='size'
+                    value={activeSprite?.size}
+                    onChange={(e) =>
+                      setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, size: parseInt(e.target.value) } : s)))
+                    }
+                    onBlur={(e) =>
+                      setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, size: parseInt(e.target.value) } : s)))
+                    }
+                  ></TextField>
+                </Box>
+              </Stack>
+            </Box>
+          </Stack>
+        </Box>
+      )}
     </Stack>
   );
 }

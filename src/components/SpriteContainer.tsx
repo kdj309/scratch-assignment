@@ -8,6 +8,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { useState } from 'react';
+import { maxCanvasHeight, maxSize } from '../utils/constants';
 
 export default function SpriteContainer() {
   const { sprites, setSprites } = useActionsContext();
@@ -39,7 +40,14 @@ export default function SpriteContainer() {
         <Stack direction={'column'} gap={2}>
           <Stage width={500} height={400}>
             <Layer>
-              <Image image={activeSprite?.image} x={activeSprite?.image?.x} y={activeSprite?.image?.y} />
+              <Image
+                image={activeSprite?.image}
+                x={activeSprite?.x}
+                y={activeSprite?.y}
+                visible={activeSprite?.visible}
+                scaleX={Math.min(1, activeSprite?.size / maxSize)}
+                scaleY={Math.min(1, activeSprite?.size / maxCanvasHeight)}
+              />
             </Layer>
           </Stage>
           <Box>
@@ -50,7 +58,9 @@ export default function SpriteContainer() {
                 size='small'
                 label='Sprite'
                 value={activeSprite?.name}
-                onBlur={(e) => setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, name: e.target.value } : s)))}
+                onChange={(e) =>
+                  setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, name: e.target.value } : s)))
+                }
               ></TextField>
               <TextField
                 InputLabelProps={{ shrink: true }}
@@ -63,7 +73,7 @@ export default function SpriteContainer() {
                   </span>
                 }
                 value={activeSprite?.x}
-                onBlur={(e) =>
+                onChange={(e) =>
                   setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, x: parseInt(e.target.value) } : s)))
                 }
               ></TextField>
@@ -78,7 +88,7 @@ export default function SpriteContainer() {
                   </span>
                 }
                 value={activeSprite?.y}
-                onBlur={(e) =>
+                onChange={(e) =>
                   setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, y: parseInt(e.target.value) } : s)))
                 }
               ></TextField>
@@ -106,6 +116,9 @@ export default function SpriteContainer() {
                   size='small'
                   label='size'
                   value={activeSprite?.size}
+                  onChange={(e) =>
+                    setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, size: parseInt(e.target.value) } : s)))
+                  }
                   onBlur={(e) =>
                     setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, size: parseInt(e.target.value) } : s)))
                   }

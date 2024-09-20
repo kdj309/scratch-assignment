@@ -23,6 +23,7 @@ import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { useState } from 'react';
 import { maxCanvasHeight, maxSize } from '../utils/constants';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import { activeAction, sprite } from '../utils/types';
 
 export default function SpriteContainer() {
   const { sprites, setSprites, availableSprites } = useActionsContext();
@@ -33,24 +34,28 @@ export default function SpriteContainer() {
     setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, visible: newValue } : s)));
   };
 
-  const executeActions = () => {
-    if (activeSprite?.name) {
-      const copied = { ...activeSprite };
-      for (let index = 0; index < copied?.activeActions?.length; index++) {
-        const element = copied?.activeActions[index];
-        if (element.category === 'Move X Steps') {
-          copied.x += element.inputs[0];
-        } else if (element.category === 'Rotate X degree') {
-          copied.rotation = (copied.rotation || 0) + element.inputs[0];
-        } else if (element.category === 'Go To X and Y') {
-          copied.x = element.inputs[0];
-          copied.y = element.inputs[1];
-        }
+  const executeActions = (actions: activeAction[], allactions: activeAction[], copied: sprite) => {
+    for (let index = 0; index < actions.length; index++) {
+      const element = actions[index];
+      if (element.category === 'Move X Steps') {
+        copied.x += element.inputs[0];
+      } else if (element.category === 'Rotate X degree') {
+        copied.rotation = (copied.rotation || 0) + element.inputs[0];
+      } else if (element.category === 'Go To X and Y') {
+        copied.x = element.inputs[0];
+        copied.y = element.inputs[1];
+      } else if (element.category === 'Repeat Animation') {
+        copied.activeActions = allactions.slice(0, index);
+        executeActions(copied.activeActions, allactions, copied);
+        break;
       }
-      copied.activeActions = [];
-      setSprites((prev) => prev.map((s) => (s.isActive ? { ...copied } : s)));
     }
+    if (copied.activeActions[0]?.category !== 'Repeat Animation') {
+      copied.activeActions = [];
+    }
+    setSprites((prev) => prev.map((s) => (s.isActive ? { ...copied } : s)));
   };
+
   const stagedSprites = sprites.filter((s) => s.isStaged).map((s) => s.id);
   return (
     <Stack>
@@ -67,7 +72,11 @@ export default function SpriteContainer() {
             <>
               <Button
                 onClick={() => {
-                  executeActions();
+                  if (activeSprite?.name) {
+                    const copied = { ...activeSprite };
+                    let originalActions = [...copied.activeActions];
+                    executeActions(copied.activeActions, originalActions, copied);
+                  }
                 }}
               >
                 <PlayCircleFilledOutlinedIcon />
@@ -92,6 +101,7 @@ export default function SpriteContainer() {
                       .filter((s) => s.isStaged)
                       .map((s) => (
                         <Image
+                          key={s.id}
                           image={s?.image}
                           x={s?.x}
                           y={s?.y}
@@ -207,7 +217,10 @@ export default function SpriteContainer() {
                         ></CardMedia>
                       </Stack>
                       <Stack direction='row'>
-                        <CardHeader titleTypographyProps={{ variant: 'body2',color:"primary" }} title={s.name}></CardHeader>
+                        <CardHeader
+                          titleTypographyProps={{ variant: 'body2', color: 'primary' }}
+                          title={s.name}
+                        ></CardHeader>
                         <CardActions disableSpacing>
                           <IconButton aria-label='delete' size='small'>
                             <DeleteOutlineOutlinedIcon fontSize='small' />
@@ -215,9 +228,7 @@ export default function SpriteContainer() {
                         </CardActions>
                       </Stack>
                     </Card>
-                  ) : (
-                    <></>
-                  )
+                  ) : null
                 )}
               </Stack>
             )}

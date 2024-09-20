@@ -28,8 +28,14 @@ export interface sprite {
   activeActions: activeAction[];
   image: HTMLImageElement;
   rotation: number;
+  isStaged: boolean;
+}
+export interface availableSprite extends Pick<sprite, 'id' | 'name'> {
+  image: string;
 }
 export interface actionsContext {
   sprites: sprite[];
   setSprites: Dispatch<SetStateAction<sprite[]>>;
+  availableSprites: availableSprite[];
+  setAvailableSprites: Dispatch<SetStateAction<availableSprite[]>>;
 }

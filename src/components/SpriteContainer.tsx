@@ -1,7 +1,20 @@
-import { Box, Button, Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardHeader,
+  CardMedia,
+  IconButton,
+  Stack,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from '@mui/material';
 import PlayCircleFilledOutlinedIcon from '@mui/icons-material/PlayCircleFilledOutlined';
 import StopCircleOutlinedIcon from '@mui/icons-material/StopCircleOutlined';
-import { Layer, Stage, Image } from 'react-konva';
+import { Layer, Stage, Image, Group } from 'react-konva';
 import { useActionsContext } from '../context/ActionsWrapper';
 import HeightOutlinedIcon from '@mui/icons-material/HeightOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -9,9 +22,10 @@ import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
 import { useState } from 'react';
 import { maxCanvasHeight, maxSize } from '../utils/constants';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
 export default function SpriteContainer() {
-  const { sprites, setSprites } = useActionsContext();
+  const { sprites, setSprites, availableSprites } = useActionsContext();
   const activeSprite = sprites.find((s) => s.isActive);
   const [visible, setvisible] = useState<boolean>(false);
   const handleVisibility = (_: React.MouseEvent<HTMLElement>, newValue: boolean) => {
@@ -37,7 +51,7 @@ export default function SpriteContainer() {
       setSprites((prev) => prev.map((s) => (s.isActive ? { ...copied } : s)));
     }
   };
-
+  const stagedSprites = sprites.filter((s) => s.isStaged).map((s) => s.id);
   return (
     <Stack>
       <Box sx={{ borderBottom: '1px solid hsl(0deg 0% 0% / 15%)', height: 'max-content' }}>
@@ -67,24 +81,33 @@ export default function SpriteContainer() {
           )}
         </Stack>
       </Box>
-      {activeSprite?.name && (
+      {sprites.length && (
         <Box width={'100%'} sx={{ height: '100%' }}>
-          <Stack direction={'column'} gap={2}>
-            <Stage width={500} height={400}>
-              <Layer>
-                <Image
-                  image={activeSprite?.image}
-                  x={activeSprite?.x}
-                  y={activeSprite?.y}
-                  visible={activeSprite?.visible}
-                  scaleX={Math.min(50, activeSprite?.size / maxSize)}
-                  scaleY={Math.min(50, activeSprite?.size / maxCanvasHeight)}
-                  rotation={activeSprite.rotation}
-                />
-              </Layer>
-            </Stage>
+          <Stack direction={'column'} gap={1}>
             <Box>
-              <Stack direction='row' marginBlock={1}>
+              <Stage width={500} height={400}>
+                <Layer>
+                  <Group>
+                    {sprites
+                      .filter((s) => s.isStaged)
+                      .map((s) => (
+                        <Image
+                          image={s?.image}
+                          x={s?.x}
+                          y={s?.y}
+                          visible={s?.visible}
+                          scaleX={Math.min(50, s?.size / maxSize)}
+                          scaleY={Math.min(50, s?.size / maxCanvasHeight)}
+                          rotation={s.rotation}
+                        />
+                      ))}
+                  </Group>
+                </Layer>
+              </Stage>
+            </Box>
+
+            <Box>
+              <Stack direction='row' marginBlock={1} paddingInline={1}>
                 <TextField
                   InputLabelProps={{ shrink: true }}
                   variant='standard'
@@ -159,6 +182,45 @@ export default function SpriteContainer() {
                 </Box>
               </Stack>
             </Box>
+            {availableSprites.length && (
+              <Stack
+                direction='row'
+                flexWrap='wrap'
+                sx={{
+                  borderTop: '1px solid hsl(0deg 0% 0% / 15%)',
+                  maxWidth: '100dvw',
+                  maxHeight: '100dvh',
+                  overflowY: 'auto',
+                }}
+                gap={2}
+              >
+                {availableSprites.map((s) =>
+                  stagedSprites.includes(s.id) ? (
+                    <Card key={s.id}>
+                      <Stack justifyContent='center' alignItems='center'>
+                        <CardMedia
+                          width={'32px'}
+                          component='img'
+                          sx={{ maxHeight: '32px', maxWidth: '32px' }}
+                          height='32px'
+                          image={s.image}
+                        ></CardMedia>
+                      </Stack>
+                      <Stack direction='row'>
+                        <CardHeader titleTypographyProps={{ variant: 'body2',color:"primary" }} title={s.name}></CardHeader>
+                        <CardActions disableSpacing>
+                          <IconButton aria-label='delete' size='small'>
+                            <DeleteOutlineOutlinedIcon fontSize='small' />
+                          </IconButton>
+                        </CardActions>
+                      </Stack>
+                    </Card>
+                  ) : (
+                    <></>
+                  )
+                )}
+              </Stack>
+            )}
           </Stack>
         </Box>
       )}

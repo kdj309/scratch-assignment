@@ -9,8 +9,8 @@ import { Stack, Typography } from '@mui/material';
 import Brightness1Icon from '@mui/icons-material/Brightness1';
 import MoveInput from './MoveInput';
 import RotateInput from './RotateInput';
-import { controls } from '../utils/constants';
 import MoveToXandY from './MoveToXandY';
+import RepeatAnimation from './RepeatAnimation';
 
 export default function CodeTab() {
   const [actionCurrentTab, setActionCurrentTab] = React.useState(0);
@@ -88,19 +88,7 @@ export default function CodeTab() {
           </CustomTabPanel>
           <CustomTabPanel value={actionCategoryTab} index={1}>
             <Stack direction='column'>
-              <Box>
-                <Typography variant='subtitle2'>Controls</Typography>
-                <Stack direction='column' marginY={2} gap={2}>
-                  {controls.map((item, i) => (
-                    <Box
-                      sx={{ backgroundColor: 'orange', p: 1, color: 'white', borderRadius: '9px' }}
-                      key={`${item}${i}`}
-                    >
-                      <Typography variant='body2'>{item}</Typography>
-                    </Box>
-                  ))}
-                </Stack>
-              </Box>
+              <RepeatAnimation />
             </Stack>
           </CustomTabPanel>
         </Box>

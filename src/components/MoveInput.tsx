@@ -4,7 +4,7 @@ import { Box, Typography } from '@mui/material';
 import { useDrag } from 'react-dnd';
 
 export default function MoveInput() {
-  const [stepsCount, setStepsCount] = useState<number>(5);
+  const [stepsCount, setStepsCount] = useState<number>(10);
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: 'action',

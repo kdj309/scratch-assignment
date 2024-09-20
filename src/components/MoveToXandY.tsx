@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { useDrag } from 'react-dnd';
 
 export default function MoveToXandY() {
-  const [xcount, setXcount] = useState<number>(10);
-  const [ycount, setYcount] = useState<number>(10);
+  const [xcount, setXcount] = useState<number>(120);
+  const [ycount, setYcount] = useState<number>(120);
 
   const [{ isDragging }, drag] = useDrag(
     () => ({

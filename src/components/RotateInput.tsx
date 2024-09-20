@@ -4,7 +4,7 @@ import { Box, Typography } from '@mui/material';
 import { useDrag } from 'react-dnd';
 
 export default function RotateInput() {
-  const [degreeValue, setDegreeValue] = useState<number>(45);
+  const [degreeValue, setDegreeValue] = useState<number>(15);
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: 'action',

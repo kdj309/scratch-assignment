@@ -26,7 +26,7 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import { activeAction, sprite } from '../utils/types';
 
 export default function SpriteContainer() {
-  const { sprites, setSprites, availableSprites } = useActionsContext();
+  const { sprites, setSprites, availableSprites, setAvailableSprites } = useActionsContext();
   const activeSprite = sprites.find((s) => s.isActive);
   const [visible, setvisible] = useState<boolean>(false);
   const handleVisibility = (_: React.MouseEvent<HTMLElement>, newValue: boolean) => {
@@ -90,10 +90,10 @@ export default function SpriteContainer() {
           )}
         </Stack>
       </Box>
-      {sprites.length && (
-        <Box width={'100%'} sx={{ height: '100%' }}>
-          <Stack direction={'column'} gap={1}>
-            <Box>
+      <Box width={'100%'} sx={{ height: '100%' }}>
+        <Stack direction={'column'} gap={1}>
+          <Box>
+            {sprites.length ? (
               <Stage width={500} height={400}>
                 <Layer>
                   <Group>
@@ -114,127 +114,137 @@ export default function SpriteContainer() {
                   </Group>
                 </Layer>
               </Stage>
-            </Box>
-
-            <Box>
-              <Stack direction='row' marginBlock={1} paddingInline={1}>
-                <TextField
-                  InputLabelProps={{ shrink: true }}
-                  variant='standard'
-                  size='small'
-                  label='Sprite'
-                  value={activeSprite?.name}
-                  onChange={(e) =>
-                    setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, name: e.target.value } : s)))
-                  }
-                ></TextField>
-                <TextField
-                  InputLabelProps={{ shrink: true }}
-                  type='number'
-                  variant='standard'
-                  size='small'
-                  label={
-                    <span>
-                      <SwapHorizOutlinedIcon fontSize='small' />X
-                    </span>
-                  }
-                  value={activeSprite?.x}
-                  onChange={(e) =>
-                    setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, x: parseInt(e.target.value) } : s)))
-                  }
-                ></TextField>
-                <TextField
-                  InputLabelProps={{ shrink: true }}
-                  type='number'
-                  variant='standard'
-                  size='small'
-                  label={
-                    <span>
-                      <HeightOutlinedIcon fontSize='small' />Y
-                    </span>
-                  }
-                  value={activeSprite?.y}
-                  onChange={(e) =>
-                    setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, y: parseInt(e.target.value) } : s)))
-                  }
-                ></TextField>
-              </Stack>
-              <Stack direction='row' justifyContent='space-evenly'>
-                <ToggleButtonGroup
-                  size='small'
-                  value={visible}
-                  exclusive
-                  onChange={handleVisibility}
-                  aria-label='text alignment'
-                >
-                  <ToggleButton size='small' value={false} aria-label='left aligned'>
-                    <VisibilityOffOutlinedIcon fontSize='small' />
-                  </ToggleButton>
-                  <ToggleButton size='small' value={true} aria-label='centered'>
-                    <VisibilityOutlinedIcon fontSize='small' />
-                  </ToggleButton>
-                </ToggleButtonGroup>
-                <Box>
-                  <TextField
-                    InputLabelProps={{ shrink: true }}
-                    type='number'
-                    variant='standard'
-                    size='small'
-                    label='size'
-                    value={activeSprite?.size}
-                    onChange={(e) =>
-                      setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, size: parseInt(e.target.value) } : s)))
-                    }
-                    onBlur={(e) =>
-                      setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, size: parseInt(e.target.value) } : s)))
-                    }
-                  ></TextField>
-                </Box>
-              </Stack>
-            </Box>
-            {availableSprites.length && (
-              <Stack
-                direction='row'
-                flexWrap='wrap'
-                sx={{
-                  borderTop: '1px solid hsl(0deg 0% 0% / 15%)',
-                  maxWidth: '100dvw',
-                  maxHeight: '100dvh',
-                  overflowY: 'auto',
-                }}
-                gap={2}
-              >
-                {availableSprites.map((s) =>
-                  stagedSprites.includes(s.id) ? (
-                    <Card key={s.id}>
-                      <Stack justifyContent='center' alignItems='center'>
-                        <CardMedia
-                          width={'32px'}
-                          component='img'
-                          sx={{ maxHeight: '32px', maxWidth: '32px' }}
-                          height='32px'
-                          image={s.image}
-                        ></CardMedia>
-                      </Stack>
-                      <Stack direction='row'>
-                        <CardHeader
-                          titleTypographyProps={{ variant: 'body2', color: 'primary' }}
-                          title={s.name}
-                        ></CardHeader>
-                        <CardActions disableSpacing>
-                          <IconButton aria-label='delete' size='small'>
-                            <DeleteOutlineOutlinedIcon fontSize='small' />
-                          </IconButton>
-                        </CardActions>
-                      </Stack>
-                    </Card>
-                  ) : null
-                )}
-              </Stack>
+            ) : (
+              <Stage width={500} height={400}></Stage>
             )}
-          </Stack>
-        </Box>
-      )}
+          </Box>
+          <Box>
+            <Stack direction='row' marginBlock={1} paddingInline={1}>
+              <TextField
+                InputLabelProps={{ shrink: true }}
+                variant='standard'
+                size='small'
+                label='Sprite'
+                value={activeSprite?.name}
+                onChange={(e) =>
+                  setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, name: e.target.value } : s)))
+                }
+              ></TextField>
+              <TextField
+                InputLabelProps={{ shrink: true }}
+                type='number'
+                variant='standard'
+                size='small'
+                label={
+                  <span>
+                    <SwapHorizOutlinedIcon fontSize='small' />X
+                  </span>
+                }
+                value={activeSprite?.x}
+                onChange={(e) =>
+                  setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, x: parseInt(e.target.value) } : s)))
+                }
+              ></TextField>
+              <TextField
+                InputLabelProps={{ shrink: true }}
+                type='number'
+                variant='standard'
+                size='small'
+                label={
+                  <span>
+                    <HeightOutlinedIcon fontSize='small' />Y
+                  </span>
+                }
+                value={activeSprite?.y}
+                onChange={(e) =>
+                  setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, y: parseInt(e.target.value) } : s)))
+                }
+              ></TextField>
+            </Stack>
+            <Stack direction='row' justifyContent='space-evenly'>
+              <ToggleButtonGroup
+                size='small'
+                value={visible}
+                exclusive
+                onChange={handleVisibility}
+                aria-label='text alignment'
+              >
+                <ToggleButton size='small' value={false} aria-label='left aligned'>
+                  <VisibilityOffOutlinedIcon fontSize='small' />
+                </ToggleButton>
+                <ToggleButton size='small' value={true} aria-label='centered'>
+                  <VisibilityOutlinedIcon fontSize='small' />
+                </ToggleButton>
+              </ToggleButtonGroup>
+              <Box>
+                <TextField
+                  InputLabelProps={{ shrink: true }}
+                  type='number'
+                  variant='standard'
+                  size='small'
+                  label='size'
+                  value={activeSprite?.size}
+                  onChange={(e) =>
+                    setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, size: parseInt(e.target.value) } : s)))
+                  }
+                  onBlur={(e) =>
+                    setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, size: parseInt(e.target.value) } : s)))
+                  }
+                ></TextField>
+              </Box>
+            </Stack>
+          </Box>
+          {availableSprites.length && (
+            <Stack
+              direction='row'
+              flexWrap='wrap'
+              sx={{
+                borderTop: '1px solid hsl(0deg 0% 0% / 15%)',
+                maxWidth: '100dvw',
+                maxHeight: '100dvh',
+                overflowY: 'auto',
+              }}
+              gap={2}
+            >
+              {availableSprites.map((s) =>
+                stagedSprites.includes(s.id) ? (
+                  <Card key={s.id}>
+                    <Stack justifyContent='center' alignItems='center'>
+                      <CardMedia
+                        width={'32px'}
+                        component='img'
+                        sx={{ maxHeight: '32px', maxWidth: '32px' }}
+                        height='32px'
+                        image={s.image}
+                      ></CardMedia>
+                    </Stack>
+                    <Stack direction='row'>
+                      <CardHeader
+                        titleTypographyProps={{ variant: 'body2', color: 'primary' }}
+                        title={s.name}
+                      ></CardHeader>
+                      <CardActions disableSpacing>
+                        <IconButton
+                          aria-label='delete'
+                          size='small'
+                          onClick={() => {
+                            setSprites((prev) => prev.filter((item) => item.id != s.id));
+                            setAvailableSprites((prev) =>
+                              prev.map((item) => (item.id === s.id ? { ...item, isStaged: false } : item))
+                            );
+                          }}
+                        >
+                          <DeleteOutlineOutlinedIcon fontSize='small' />
+                        </IconButton>
+                      </CardActions>
+                    </Stack>
+                  </Card>
+                ) : null
+              )}
+            </Stack>
+          )}
+        </Stack>
+      </Box>
     </Stack>
   );
 }

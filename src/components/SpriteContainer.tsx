@@ -222,10 +222,10 @@ export default function SpriteContainer() {
                   >
                     <Stack justifyContent='center' alignItems='center'>
                       <CardMedia
-                        width={'32px'}
+                        width={'28px'}
                         component='img'
-                        sx={{ maxHeight: '32px', maxWidth: '32px' }}
-                        height='32px'
+                        sx={{ maxHeight: '32px', maxWidth: '32px', objectFit: 'contain' }}
+                        height='28px'
                         image={s.image}
                       ></CardMedia>
                     </Stack>
@@ -239,11 +239,17 @@ export default function SpriteContainer() {
                         <IconButton
                           aria-label='delete'
                           size='small'
-                          onClick={() => {
-                            setSprites((prev) => prev.filter((item) => item.id != s.id));
+                          onClick={(e) => {
+                            setSprites((prev) => {
+                              const copied = [...prev];
+                              const filteredSprites = copied.filter((item) => item.id != s.id);
+                              filteredSprites[0].isActive = true;
+                              return filteredSprites;
+                            });
                             setAvailableSprites((prev) =>
                               prev.map((item) => (item.id === s.id ? { ...item, isStaged: false } : item))
                             );
+                            e.stopPropagation();
                           }}
                         >
                           <DeleteOutlineOutlinedIcon fontSize='small' />

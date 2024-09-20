@@ -18,26 +18,25 @@ export default function SpriteContainer() {
     setvisible(newValue);
     setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, visible: newValue } : s)));
   };
-  // switch (currentAction.category) {
-  //   case 'Move X Steps':
-  //     updatedSprite.x += currentAction.inputs[0];
-  //     break;
-  //   case 'Rotate X degree':
-  //     updatedSprite.rotation = (updatedSprite.rotation || 0) + currentAction.inputs[0];
-  //     break;
-  //   case 'Go To X and Y':
-  //     updatedSprite.x = currentAction.inputs[0];
-  //     updatedSprite.y = currentAction.inputs[1];
-  //     break;
-  //   default:
-  //     break;
-  // }
-  const executeActions = (spriteId: string) => {
-    // Start the recursive call
-  };
 
-  // Play button onClick handler
-  <button onClick={() => executeActions('cat')}>Run Actions</button>;
+  const executeActions = () => {
+    if (activeSprite?.name) {
+      const copied = { ...activeSprite };
+      for (let index = 0; index < copied?.activeActions?.length; index++) {
+        const element = copied?.activeActions[index];
+        if (element.category === 'Move X Steps') {
+          copied.x += element.inputs[0];
+        } else if (element.category === 'Rotate X degree') {
+          copied.rotation = (copied.rotation || 0) + element.inputs[0];
+        } else if (element.category === 'Go To X and Y') {
+          copied.x = element.inputs[0];
+          copied.y = element.inputs[1];
+        }
+      }
+      copied.activeActions = [];
+      setSprites((prev) => prev.map((s) => (s.isActive ? { ...copied } : s)));
+    }
+  };
 
   return (
     <Stack>
@@ -54,7 +53,7 @@ export default function SpriteContainer() {
             <>
               <Button
                 onClick={() => {
-                  executeActions(activeSprite?.id);
+                  executeActions();
                 }}
               >
                 <PlayCircleFilledOutlinedIcon />

@@ -10,13 +10,13 @@ export default function AvailableSpritesContainer() {
           .filter((s) => !s.isStaged)
           .map((s) => {
             return (
-              <Card>
+              <Card className='tw-p-2'>
                 <CardMedia
                   image={s.image}
-                  sx={{ maxHeight: '160px', maxWidth: '160px', width: '160px', height: '160px', objectFit: 'contain' }}
+                  sx={{ maxHeight: '150px', maxWidth: '150px', width: '150px', height: '150px', objectFit: 'contain' }}
                   component='img'
                 ></CardMedia>
-                <CardHeader title={s.name}></CardHeader>
+                <CardHeader title={s.name} titleTypographyProps={{ textAlign: 'center' }}></CardHeader>
               </Card>
             );
           })}

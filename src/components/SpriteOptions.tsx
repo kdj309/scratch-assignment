@@ -30,7 +30,7 @@ export default function SpriteOptions() {
         } else if (randomnormalsprite.id === 'boy' && boy != undefined) {
           randomSprite = getSpriteVersion(randomnormalsprite.id, boy, randomnormalsprite.name);
         }
-        setSprites((prev) => [...prev, randomSprite]);
+        setSprites((prev) => [...prev.map((s) => ({ ...s, isActive: false })), randomSprite]);
         setAvailableSprites((prev) => prev.map((s) => (s.id === randomSprite.id ? { ...s, isStaged: false } : s)));
       },
     },

@@ -59,7 +59,7 @@ export default function SpriteContainer() {
   const stagedSprites = sprites.filter((s) => s.isStaged).map((s) => s.id);
   return (
     <Stack>
-      <Box sx={{ borderBottom: '1px solid hsl(0deg 0% 0% / 15%)', height: 'max-content' }}>
+      <Box sx={{ borderBottom: '1px solid hsl(0deg 0% 0% / 15%)', height: 'max-content' }} paddingInline={1}>
         <Stack
           direction='row'
           justifyContent='space-between'
@@ -91,7 +91,7 @@ export default function SpriteContainer() {
         </Stack>
       </Box>
       <Box width={'100%'} sx={{ height: '100%' }}>
-        <Stack direction={'column'} gap={1}>
+        <Stack direction={'column'} gap={0.5}>
           <Box>
             {sprites.length ? (
               <Stage width={500} height={400}>
@@ -119,7 +119,7 @@ export default function SpriteContainer() {
             )}
           </Box>
           <Box>
-            <Stack direction='row' marginBlock={1} paddingInline={1}>
+            <Stack direction='row' marginBottom={1} paddingInline={1}>
               <TextField
                 InputLabelProps={{ shrink: true }}
                 variant='standard'
@@ -208,7 +208,18 @@ export default function SpriteContainer() {
             >
               {availableSprites.map((s) =>
                 stagedSprites.includes(s.id) ? (
-                  <Card key={s.id}>
+                  <Card
+                    key={s.id}
+                    sx={{ cursor: 'pointer', paddingBlock: 1 }}
+                    onClick={() => {
+                      setSprites((prev) => {
+                        const copied = [...prev].map((i) => ({ ...i, isActive: false }));
+                        const activeSprite = copied.map((i) => (i.id === s.id ? { ...i, isActive: true } : i));
+                        return activeSprite;
+                      });
+                    }}
+                    className={s.id === activeSprite?.id ? `tw-border-2 tw-border-[#b5a5d4] ` : ''}
+                  >
                     <Stack justifyContent='center' alignItems='center'>
                       <CardMedia
                         width={'32px'}
@@ -222,8 +233,9 @@ export default function SpriteContainer() {
                       <CardHeader
                         titleTypographyProps={{ variant: 'body2', color: 'primary' }}
                         title={s.name}
+                        sx={{ paddingBlock: 0 }}
                       ></CardHeader>
-                      <CardActions disableSpacing>
+                      <CardActions disableSpacing sx={{ paddingBlock: 0 }}>
                         <IconButton
                           aria-label='delete'
                           size='small'

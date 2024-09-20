@@ -35,6 +35,7 @@ export const ActionContextWrapper: FunctionComponent<contextWrapperProps> = ({ c
           isActive: true,
           rotation: 0,
           isStaged: true,
+          isDragging: false,
         },
       ]);
     }

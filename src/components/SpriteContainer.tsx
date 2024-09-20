@@ -109,6 +109,19 @@ export default function SpriteContainer() {
                           scaleX={Math.min(50, s?.size / maxSize)}
                           scaleY={Math.min(50, s?.size / maxCanvasHeight)}
                           rotation={s.rotation}
+                          draggable={true}
+                          onDragStart={() => {
+                            setSprites((prev) => prev.map((i) => (i.id === s.id ? { ...i, isDragging: true } : i)));
+                          }}
+                          onDragEnd={(evt) => {
+                            setSprites((prev) =>
+                              prev.map((i) =>
+                                i.id === s.id ? { ...i, x: evt.target.x(), y: evt.target.y(), isDragging: false } : i
+                              )
+                            );
+                          }}
+                          shadowEnabled={s.isDragging}
+                          shadowColor='#9c7ade'
                         />
                       ))}
                   </Group>
@@ -218,7 +231,7 @@ export default function SpriteContainer() {
                         return activeSprite;
                       });
                     }}
-                    className={s.id === activeSprite?.id ? `tw-border-2 tw-border-[#b5a5d4] ` : ''}
+                    className={s.id === activeSprite?.id ? `tw-border-2 tw-border-[#9c7ade] ` : ''}
                   >
                     <Stack justifyContent='center' alignItems='center'>
                       <CardMedia

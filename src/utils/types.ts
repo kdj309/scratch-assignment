@@ -29,6 +29,7 @@ export interface sprite {
   image: HTMLImageElement;
   rotation: number;
   isStaged: boolean;
+  isDragging: boolean;
 }
 export interface availableSprite extends Pick<sprite, 'id' | 'name' | 'isStaged'> {
   image: string;

@@ -1,8 +1,9 @@
-import { Box, Button, List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
+import { Box, Button, List, Stack, Typography } from '@mui/material';
 import { useDrop } from 'react-dnd';
 import { useActionsContext } from '../context/ActionsWrapper';
 import { activeAction } from '../utils/types';
 import RestartAltOutlinedIcon from '@mui/icons-material/RestartAltOutlined';
+import DraggableListItem from './DraggableListItem';
 export default function Actions() {
   const { setSprites, sprites } = useActionsContext();
   const [, drop] = useDrop(() => ({
@@ -50,12 +51,12 @@ export default function Actions() {
               copiedactioncategory = copiedactioncategory.replace('X', String(copiedactioninputs[0]));
             }
             return (
-              <ListItem
-                className='tw-bg-blue-400 tw-text-white tw-my-1'
+              <DraggableListItem
                 key={`${Math.floor(Math.random() * 10)}${idx}}`}
-              >
-                <ListItemText>{copiedactioncategory}</ListItemText>
-              </ListItem>
+                copiedactioncategory={copiedactioncategory}
+                id={activeSprite?.id}
+                action={action}
+              />
             );
           })}
         </List>

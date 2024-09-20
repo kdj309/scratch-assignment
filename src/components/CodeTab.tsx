@@ -11,16 +11,39 @@ import MoveInput from './MoveInput';
 import RotateInput from './RotateInput';
 import MoveToXandY from './MoveToXandY';
 import RepeatAnimation from './RepeatAnimation';
+import { useDrop } from 'react-dnd';
+import { useActionsContext } from '../context/ActionsWrapper';
+import { activeAction } from '../utils/types';
 
 export default function CodeTab() {
   const [actionCurrentTab, setActionCurrentTab] = React.useState(0);
   const [actionCategoryTab, setActionCategoryTab] = React.useState(0);
+  const { setSprites } = useActionsContext();
   const handleActionTab = (_: React.SyntheticEvent, newValue: number) => {
     setActionCurrentTab(newValue);
   };
   const handleActionCategoryTab = (_: React.SyntheticEvent, newValue: number) => {
     setActionCategoryTab(newValue);
   };
+  const [_, drop] = useDrop(() => {
+    return {
+      accept: 'activeaction',
+      drop(item: { id: string; action: activeAction }) {
+        setSprites((s) =>
+          s.map((spriteitem) => {
+            if (spriteitem.id === item.id) {
+              const filteredactions = [...spriteitem.activeActions].filter((a) => a.category != item.action.category);
+              return {
+                ...spriteitem,
+                activeActions: filteredactions,
+              };
+            }
+            return spriteitem;
+          })
+        );
+      },
+    };
+  });
 
   return (
     <Box sx={{ width: '100%', borderRight: '1px solid hsl(0deg 0% 0% / 15%)' }}>
@@ -38,7 +61,7 @@ export default function CodeTab() {
         </Tabs>
       </Box>
       <CustomTabPanel value={actionCurrentTab} index={0}>
-        <Box sx={{ flexGrow: 1, display: 'flex', padding: '12px' }}>
+        <Box sx={{ flexGrow: 1, display: 'flex', padding: '12px' }} ref={drop}>
           <Tabs
             orientation='vertical'
             variant='scrollable'

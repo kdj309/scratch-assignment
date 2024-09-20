@@ -30,7 +30,7 @@ export interface sprite {
   rotation: number;
   isStaged: boolean;
 }
-export interface availableSprite extends Pick<sprite, 'id' | 'name'> {
+export interface availableSprite extends Pick<sprite, 'id' | 'name' | 'isStaged'> {
   image: string;
 }
 export interface actionsContext {

@@ -5,6 +5,7 @@ import Code from './components/Code';
 import SpriteContainer from './components/SpriteContainer';
 import { Container, Stack } from '@mui/material';
 import Navbar from './components/Navbar';
+import SpriteOptions from './components/SpriteOptions';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           </Grid>
         </Container>
       </Stack>
+      <SpriteOptions />
     </>
   );
 }

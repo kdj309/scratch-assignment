@@ -20,5 +20,6 @@ export function getSpriteVersion(id: string, image: HTMLImageElement, name: stri
     rotation: 0,
     isStaged: true,
     isDragging: false,
+    collision: false,
   };
 }

@@ -20,15 +20,18 @@ import HeightOutlinedIcon from '@mui/icons-material/HeightOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { maxCanvasHeight, maxSize } from '../utils/constants';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { activeAction, sprite } from '../utils/types';
+import { IRect } from 'konva/lib/types';
 
 export default function SpriteContainer() {
   const { sprites, setSprites, availableSprites, setAvailableSprites } = useActionsContext();
   const activeSprite = sprites.find((s) => s.isActive);
   const [visible, setvisible] = useState<boolean>(false);
+  const layerRef = useRef(null);
+
   const handleVisibility = (_: React.MouseEvent<HTMLElement>, newValue: boolean) => {
     setvisible(newValue);
     setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, visible: newValue } : s)));
@@ -49,6 +52,11 @@ export default function SpriteContainer() {
         executeActions(copied.activeActions, allactions, copied);
         break;
       }
+      // const collisionDetected = detectCollision(copied,sprites);
+      // if (collisionDetected) {
+      //   console.log("Collision detected between sprites!");
+      //   // You can handle the collision here (e.g., stop movement, trigger an animation, etc.)
+      // }
     }
     if (copied.activeActions[0]?.category !== 'Repeat Animation') {
       copied.activeActions = [];
@@ -57,6 +65,35 @@ export default function SpriteContainer() {
   };
 
   const stagedSprites = sprites.filter((s) => s.isStaged).map((s) => s.id);
+  // const detectCollision = (updatedSprite, allSprites) => {
+  //   const activeRect = {
+  //     x: updatedSprite.x,
+  //     y: updatedSprite.y,
+  //     width: updatedSprite.size,
+  //     height: updatedSprite.size
+  //   };
+
+  //   // Loop through all sprites except the one currently being moved
+  //   for (let sprite of allSprites) {
+  //     if (sprite.id !== updatedSprite.id) {
+  //       const otherRect = {
+  //         x: sprite.x,
+  //         y: sprite.y,
+  //         width: sprite.size,
+  //         height: sprite.size
+  //       };
+
+  //       if (haveIntersection(activeRect, otherRect)) {
+  //         return true;  // Collision detected
+  //       }
+  //     }
+  //   }
+
+  //   return false;  // No collision
+  // };
+  function haveIntersection(r1: IRect, r2: IRect) {
+    return !(r2.x > r1.x + r1.width || r2.x + r2.width < r1.x || r2.y > r1.y + r1.height || r2.y + r2.height < r1.y);
+  }
   return (
     <Stack>
       <Box sx={{ borderBottom: '1px solid hsl(0deg 0% 0% / 15%)', height: 'max-content' }} paddingInline={1}>
@@ -94,7 +131,7 @@ export default function SpriteContainer() {
         <Stack direction={'column'} gap={0.5}>
           <Box>
             {sprites.length ? (
-              <Stage width={500} height={400}>
+              <Stage width={500} height={400} ref={layerRef}>
                 <Layer>
                   <Group>
                     {sprites
@@ -103,6 +140,7 @@ export default function SpriteContainer() {
                         <Image
                           key={s.id}
                           image={s?.image}
+                          id={s.id}
                           x={s?.x}
                           y={s?.y}
                           visible={s?.visible}
@@ -122,6 +160,31 @@ export default function SpriteContainer() {
                           }}
                           shadowEnabled={s.isDragging}
                           shadowColor='#9c7ade'
+                          shadowBlur={15}
+                          onDragMove={(e) => {
+                            const id = e.target.id();
+                            const rect = e.target.getClientRect();
+                            const spriteOneActions = sprites.find((s) => s.id === id)?.activeActions;
+                            console.log({ spriteOneActions });
+                            if (layerRef?.current != undefined) {
+                              setSprites((prevSprites) =>
+                                prevSprites.map((sprite) => {
+                                  if (sprite.id !== id) {
+                                    //@ts-ignore
+                                    const otherRect = layerRef?.current.findOne(`#${sprite.id}`).getClientRect();
+                                    console.log({ spriteTwoActions: sprite.activeActions });
+                                    if (haveIntersection(rect, otherRect)) {
+                                      return { ...sprite, collision: true };
+                                    } else {
+                                      return { ...sprite, collision: false };
+                                    }
+                                  }
+                                  return sprite;
+                                })
+                              );
+                            }
+                          }}
+                          fill={s.collision ? 'red' : ''}
                         />
                       ))}
                   </Group>

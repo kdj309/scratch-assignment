@@ -30,6 +30,7 @@ export interface sprite {
   rotation: number;
   isStaged: boolean;
   isDragging: boolean;
+  collision: boolean;
 }
 export interface availableSprite extends Pick<sprite, 'id' | 'name' | 'isStaged'> {
   image: string;

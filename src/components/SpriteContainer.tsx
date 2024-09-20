@@ -55,7 +55,6 @@ export default function SpriteContainer() {
       // const collisionDetected = detectCollision(copied,sprites);
       // if (collisionDetected) {
       //   console.log("Collision detected between sprites!");
-      //   // You can handle the collision here (e.g., stop movement, trigger an animation, etc.)
       // }
     }
     if (copied.activeActions[0]?.category !== 'Repeat Animation') {
@@ -73,7 +72,6 @@ export default function SpriteContainer() {
   //     height: updatedSprite.size
   //   };
 
-  //   // Loop through all sprites except the one currently being moved
   //   for (let sprite of allSprites) {
   //     if (sprite.id !== updatedSprite.id) {
   //       const otherRect = {
@@ -84,12 +82,12 @@ export default function SpriteContainer() {
   //       };
 
   //       if (haveIntersection(activeRect, otherRect)) {
-  //         return true;  // Collision detected
+  //         return true;  
   //       }
   //     }
   //   }
 
-  //   return false;  // No collision
+  //   return false;  
   // };
   function haveIntersection(r1: IRect, r2: IRect) {
     return !(r2.x > r1.x + r1.width || r2.x + r2.width < r1.x || r2.y > r1.y + r1.height || r2.y + r2.height < r1.y);

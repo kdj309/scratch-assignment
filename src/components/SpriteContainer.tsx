@@ -13,7 +13,6 @@ import {
   Typography,
 } from '@mui/material';
 import PlayCircleFilledOutlinedIcon from '@mui/icons-material/PlayCircleFilledOutlined';
-import StopCircleOutlinedIcon from '@mui/icons-material/StopCircleOutlined';
 import { Layer, Stage, Image, Group } from 'react-konva';
 import { useActionsContext } from '../context/ActionsWrapper';
 import HeightOutlinedIcon from '@mui/icons-material/HeightOutlined';

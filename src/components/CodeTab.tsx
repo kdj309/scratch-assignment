@@ -14,17 +14,18 @@ import RepeatAnimation from './RepeatAnimation';
 import { useDrop } from 'react-dnd';
 import { useActionsContext } from '../context/ActionsWrapper';
 import { activeAction } from '../utils/types';
+import { useCallback } from 'react';
 
 export default function CodeTab() {
   const [actionCurrentTab, setActionCurrentTab] = React.useState(0);
   const [actionCategoryTab, setActionCategoryTab] = React.useState(0);
   const { setSprites } = useActionsContext();
-  const handleActionTab = (_: React.SyntheticEvent, newValue: number) => {
+  const handleActionTab = useCallback((_: React.SyntheticEvent, newValue: number) => {
     setActionCurrentTab(newValue);
-  };
-  const handleActionCategoryTab = (_: React.SyntheticEvent, newValue: number) => {
+  }, []);
+  const handleActionCategoryTab = useCallback((_: React.SyntheticEvent, newValue: number) => {
     setActionCategoryTab(newValue);
-  };
+  }, []);
   const [_, drop] = useDrop(() => {
     return {
       accept: 'activeaction',

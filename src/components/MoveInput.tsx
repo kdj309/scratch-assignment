@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { actions } from '../utils/constants';
 import { Box, Typography } from '@mui/material';
 import { useDrag } from 'react-dnd';
-
 export default function MoveInput() {
   const [stepsCount, setStepsCount] = useState<number>(10);
   const [{ isDragging }, drag] = useDrag(

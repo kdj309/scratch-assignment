@@ -4,6 +4,7 @@ import { useActionsContext } from '../context/ActionsWrapper';
 import { activeAction } from '../utils/types';
 import RestartAltOutlinedIcon from '@mui/icons-material/RestartAltOutlined';
 import DraggableListItem from './DraggableListItem';
+import { useMemo } from 'react';
 export default function Actions() {
   const { setSprites, sprites } = useActionsContext();
   const [, drop] = useDrop(() => ({
@@ -14,7 +15,7 @@ export default function Actions() {
       });
     },
   }));
-  const activeSprite = sprites.find((s) => s.isActive);
+  const activeSprite = useMemo(() => sprites.find((s) => s.isActive), [sprites]);
 
   return (
     <Stack direction={'column'} sx={{ width: '100%', borderRight: '1px solid hsl(0deg 0% 0% / 15%)', height: '100%' }}>

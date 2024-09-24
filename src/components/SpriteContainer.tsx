@@ -20,11 +20,12 @@ import HeightOutlinedIcon from '@mui/icons-material/HeightOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import SwapHorizOutlinedIcon from '@mui/icons-material/SwapHorizOutlined';
-import { useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { maxCanvasHeight, maxSize } from '../utils/constants';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { activeAction, sprite } from '../utils/types';
 import { IRect } from 'konva/lib/types';
+import * as lodash from 'lodash';
 
 export default function SpriteContainer() {
   const { sprites, setSprites, availableSprites, setAvailableSprites } = useActionsContext();
@@ -32,66 +33,105 @@ export default function SpriteContainer() {
   const [visible, setvisible] = useState<boolean>(false);
   const layerRef = useRef(null);
 
-  const handleVisibility = (_: React.MouseEvent<HTMLElement>, newValue: boolean) => {
+  const handleVisibility = useCallback((_: React.MouseEvent<HTMLElement>, newValue: boolean) => {
     setvisible(newValue);
     setSprites((prev) => prev.map((s) => (s.isActive ? { ...s, visible: newValue } : s)));
-  };
+  }, []);
 
-  const executeActions = (actions: activeAction[], allactions: activeAction[], copied: sprite) => {
-    for (let index = 0; index < actions.length; index++) {
-      const element = actions[index];
-      if (element.category === 'Move X Steps') {
-        copied.x += element.inputs[0];
-      } else if (element.category === 'Rotate X degree') {
-        copied.rotation = (copied.rotation || 0) + element.inputs[0];
-      } else if (element.category === 'Go To X and Y') {
-        copied.x = element.inputs[0];
-        copied.y = element.inputs[1];
-      } else if (element.category === 'Repeat Animation') {
-        copied.activeActions = allactions.slice(0, index);
-        executeActions(copied.activeActions, allactions, copied);
-        break;
+  const executeActions = useCallback(
+    (actions: activeAction[], allactions: activeAction[], copied: sprite) => {
+      const updatedCopied = { ...copied };
+
+      for (let index = 0; index < actions.length; index++) {
+        const element = actions[index];
+        if (element.category === 'Move X Steps') {
+          updatedCopied.x += element.inputs[0];
+        } else if (element.category === 'Rotate X degree') {
+          updatedCopied.rotation = (updatedCopied.rotation || 0) + element.inputs[0];
+        } else if (element.category === 'Go To X and Y') {
+          updatedCopied.x = element.inputs[0];
+          updatedCopied.y = element.inputs[1];
+        } else if (element.category === 'Repeat Animation') {
+          updatedCopied.activeActions = allactions.slice(0, index);
+          executeActions(updatedCopied.activeActions, allactions, updatedCopied);
+          break;
+        }
+
+        const { didCollide, otherSpriteId } = detectCollision(updatedCopied, sprites);
+        if (didCollide) {
+          const othersprite = sprites.find((s) => s.id === otherSpriteId);
+          if (othersprite) {
+            console.log('Collision Detection');
+            updatedCopied.collision = true;
+            const copiedOtherSprite = lodash.cloneDeep(othersprite);
+            copiedOtherSprite.collision = true;
+            const temp = updatedCopied.activeActions;
+            updatedCopied.activeActions = copiedOtherSprite.activeActions;
+            copiedOtherSprite.activeActions = temp;
+
+            setSprites((prevSprites) => {
+              return prevSprites.map((s) => {
+                if (s.id === updatedCopied.id) return updatedCopied;
+                if (s.id === othersprite.id) return copiedOtherSprite;
+                return s;
+              });
+            });
+            executeActions(updatedCopied.activeActions, updatedCopied.activeActions, updatedCopied);
+            break;
+          }
+        } else {
+          updatedCopied.collision = false;
+        }
       }
-      // const collisionDetected = detectCollision(copied,sprites);
-      // if (collisionDetected) {
-      //   console.log("Collision detected between sprites!");
-      // }
+
+      if (updatedCopied.activeActions[0]?.category !== 'Repeat Animation') {
+        updatedCopied.activeActions = [];
+      }
+
+      setSprites((prev) => prev.map((s) => (s.id === updatedCopied.id ? updatedCopied : s)));
+    },
+    [sprites]
+  );
+  const stagedSprites = useMemo(() => sprites.filter((s) => s.isStaged).map((s) => s.id), [sprites]);
+  const detectCollision = useCallback((updatedSprite: sprite, allSprites: sprite[]) => {
+    const scaleFactor =
+      updatedSprite.size / Math.max(updatedSprite.image.naturalWidth, updatedSprite.image.naturalHeight);
+    if (layerRef.current) {
+      //@ts-ignore
+      const activeNode = layerRef.current.findOne(`#${updatedSprite.id}`);
+      console.log({ scaleFactor });
+      let activeRect = activeNode.getClientRect();
+      activeRect.x = updatedSprite.x;
+      activeRect.y = updatedSprite.y;
+      for (let sprite of allSprites) {
+        if (sprite.id !== updatedSprite.id) {
+          //@ts-ignore
+          const otherNode = layerRef.current.findOne(`#${sprite.id}`);
+          const otherRect = otherNode.getClientRect();
+          if (haveIntersection(activeRect, otherRect)) {
+            return { didCollide: true, otherSpriteId: sprite.id };
+          }
+        }
+      }
     }
-    if (copied.activeActions[0]?.category !== 'Repeat Animation') {
-      copied.activeActions = [];
+
+    return { didCollide: false, otherSpriteId: null };
+  }, []);
+  const haveIntersection = useCallback((r1: IRect, r2: IRect) => {
+    return !(
+      r2.x > r1.x + Math.floor(r1.width) ||
+      r2.x + Math.floor(r2.width) < r1.x ||
+      r2.y > r1.y + Math.floor(r1.height) ||
+      r2.y + Math.floor(r2.height) < r1.y
+    );
+  }, []);
+  const playHandler = useCallback(() => {
+    if (activeSprite?.name) {
+      const copied = lodash.cloneDeep(activeSprite);
+      let originalActions = [...copied.activeActions];
+      executeActions(copied.activeActions, originalActions, copied);
     }
-    setSprites((prev) => prev.map((s) => (s.isActive ? { ...copied } : s)));
-  };
-
-  const stagedSprites = sprites.filter((s) => s.isStaged).map((s) => s.id);
-  // const detectCollision = (updatedSprite, allSprites) => {
-  //   const activeRect = {
-  //     x: updatedSprite.x,
-  //     y: updatedSprite.y,
-  //     width: updatedSprite.size,
-  //     height: updatedSprite.size
-  //   };
-
-  //   for (let sprite of allSprites) {
-  //     if (sprite.id !== updatedSprite.id) {
-  //       const otherRect = {
-  //         x: sprite.x,
-  //         y: sprite.y,
-  //         width: sprite.size,
-  //         height: sprite.size
-  //       };
-
-  //       if (haveIntersection(activeRect, otherRect)) {
-  //         return true;  
-  //       }
-  //     }
-  //   }
-
-  //   return false;  
-  // };
-  function haveIntersection(r1: IRect, r2: IRect) {
-    return !(r2.x > r1.x + r1.width || r2.x + r2.width < r1.x || r2.y > r1.y + r1.height || r2.y + r2.height < r1.y);
-  }
+  }, []);
   return (
     <Stack>
       <Box sx={{ borderBottom: '1px solid hsl(0deg 0% 0% / 15%)', height: 'max-content' }} paddingInline={1}>
@@ -105,15 +145,7 @@ export default function SpriteContainer() {
           <Typography variant='subtitle1'>Sprite</Typography>
           {activeSprite?.name ? (
             <>
-              <Button
-                onClick={() => {
-                  if (activeSprite?.name) {
-                    const copied = { ...activeSprite };
-                    let originalActions = [...copied.activeActions];
-                    executeActions(copied.activeActions, originalActions, copied);
-                  }
-                }}
-              >
+              <Button onClick={playHandler}>
                 <PlayCircleFilledOutlinedIcon />
               </Button>
               <Button>
@@ -147,7 +179,11 @@ export default function SpriteContainer() {
                           rotation={s.rotation}
                           draggable={true}
                           onDragStart={() => {
-                            setSprites((prev) => prev.map((i) => (i.id === s.id ? { ...i, isDragging: true } : i)));
+                            setSprites((prev) =>
+                              prev.map((i) =>
+                                i.id === s.id ? { ...i, isDragging: true, isActive: true } : { ...i, isActive: false }
+                              )
+                            );
                           }}
                           onDragEnd={(evt) => {
                             setSprites((prev) =>
@@ -162,15 +198,14 @@ export default function SpriteContainer() {
                           onDragMove={(e) => {
                             const id = e.target.id();
                             const rect = e.target.getClientRect();
-                            const spriteOneActions = sprites.find((s) => s.id === id)?.activeActions;
-                            console.log({ spriteOneActions });
+                            // const spriteOneActions = sprites.find((s) => s.id === id)?.activeActions;
                             if (layerRef?.current != undefined) {
                               setSprites((prevSprites) =>
                                 prevSprites.map((sprite) => {
                                   if (sprite.id !== id) {
                                     //@ts-ignore
                                     const otherRect = layerRef?.current.findOne(`#${sprite.id}`).getClientRect();
-                                    console.log({ spriteTwoActions: sprite.activeActions });
+                                    console.log({ otherRect });
                                     if (haveIntersection(rect, otherRect)) {
                                       return { ...sprite, collision: true };
                                     } else {

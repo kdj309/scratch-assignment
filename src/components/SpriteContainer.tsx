@@ -79,7 +79,7 @@ export default function SpriteContainer() {
                 return s;
               });
             });
-            handlCollision(
+            handleCollision(
               copiedOtherSprite,
               updatedCopied,
               copiedOtherSprite.activeActions,
@@ -122,7 +122,7 @@ export default function SpriteContainer() {
 
     return { didCollide: false, otherSpriteId: null };
   }, []);
-  const handlCollision = useCallback(
+  const handleCollision = useCallback(
     (spriteone: sprite, spritetwo: sprite, spriteOneActions: activeAction[], spriteTwoActions: activeAction[]) => {
       const updatedOneCopied = lodash.cloneDeep(spriteone);
       const updateTwoCopied = lodash.cloneDeep(spritetwo);
@@ -165,11 +165,11 @@ export default function SpriteContainer() {
 
       setSprites((prev) =>
         prev.map((s) =>
-          s.id === updatedOneCopied.id
+          (s.id === updatedOneCopied.id
             ? { ...updatedOneCopied, collision: false }
             : s.id === updateTwoCopied.id
               ? { ...updateTwoCopied, collision: false }
-              : s
+              : s)
         )
       );
     },
@@ -240,14 +240,14 @@ export default function SpriteContainer() {
                           onDragStart={() => {
                             setSprites((prev) =>
                               prev.map((i) =>
-                                i.id === s.id ? { ...i, isDragging: true, isActive: true } : { ...i, isActive: false }
+                                (i.id === s.id ? { ...i, isDragging: true, isActive: true } : { ...i, isActive: false })
                               )
                             );
                           }}
                           onDragEnd={(evt) => {
                             setSprites((prev) =>
                               prev.map((i) =>
-                                i.id === s.id ? { ...i, x: evt.target.x(), y: evt.target.y(), isDragging: false } : i
+                                (i.id === s.id ? { ...i, x: evt.target.x(), y: evt.target.y(), isDragging: false } : i)
                               )
                             );
                           }}
@@ -374,7 +374,7 @@ export default function SpriteContainer() {
               gap={2}
             >
               {availableSprites.map((s) =>
-                stagedSprites.includes(s.id) ? (
+                (stagedSprites.includes(s.id) ? (
                   <Card
                     key={s.id}
                     sx={{ cursor: 'pointer', paddingBlock: 1 }}
@@ -424,7 +424,7 @@ export default function SpriteContainer() {
                       </CardActions>
                     </Stack>
                   </Card>
-                ) : null
+                ) : null)
               )}
             </Stack>
           )}

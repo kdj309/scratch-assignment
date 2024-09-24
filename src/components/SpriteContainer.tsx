@@ -255,7 +255,6 @@ export default function SpriteContainer() {
                           shadowColor='#9c7ade'
                           shadowBlur={15}
                           onDragMove={(e) => {
-                            lodash.debounce(() => {
                               const id = e.target.id();
                               const rect = e.target.getClientRect();
                               if (layerRef?.current != undefined) {
@@ -273,7 +272,6 @@ export default function SpriteContainer() {
                                   })
                                 );
                               }
-                            }, 500);
                           }}
                           fill={s.collision ? 'red' : ''}
                         />

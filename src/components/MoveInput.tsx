@@ -10,7 +10,7 @@ export default function MoveInput() {
       item: { category: 'Move X Steps', inputs: [stepsCount] },
       collect(monitor) {
         return {
-          isDragging: !!monitor.isDragging(),
+          isDragging: Boolean(monitor.isDragging()),
         };
       },
     }),

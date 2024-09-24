@@ -40,7 +40,7 @@ export default function SpriteContainer() {
 
   const executeActions = useCallback(
     (actions: activeAction[], allactions: activeAction[], copied: sprite) => {
-      const updatedCopied = { ...copied };
+      const updatedCopied = lodash.cloneDeep(copied);
 
       for (let index = 0; index < actions.length; index++) {
         const element = actions[index];
@@ -64,19 +64,27 @@ export default function SpriteContainer() {
             console.log('Collision Detection');
             updatedCopied.collision = true;
             const copiedOtherSprite = lodash.cloneDeep(othersprite);
-            copiedOtherSprite.collision = true;
             const temp = updatedCopied.activeActions;
             updatedCopied.activeActions = copiedOtherSprite.activeActions;
             copiedOtherSprite.activeActions = temp;
 
             setSprites((prevSprites) => {
               return prevSprites.map((s) => {
-                if (s.id === updatedCopied.id) return updatedCopied;
-                if (s.id === othersprite.id) return copiedOtherSprite;
+                if (s.id === updatedCopied.id) {
+                  return updatedCopied;
+                }
+                if (s.id === othersprite.id) {
+                  return copiedOtherSprite;
+                }
                 return s;
               });
             });
-            executeActions(updatedCopied.activeActions, updatedCopied.activeActions, updatedCopied);
+            handlCollision(
+              copiedOtherSprite,
+              updatedCopied,
+              copiedOtherSprite.activeActions,
+              updatedCopied.activeActions
+            );
             break;
           }
         } else {
@@ -94,18 +102,15 @@ export default function SpriteContainer() {
   );
   const stagedSprites = useMemo(() => sprites.filter((s) => s.isStaged).map((s) => s.id), [sprites]);
   const detectCollision = useCallback((updatedSprite: sprite, allSprites: sprite[]) => {
-    const scaleFactor =
-      updatedSprite.size / Math.max(updatedSprite.image.naturalWidth, updatedSprite.image.naturalHeight);
     if (layerRef.current) {
-      //@ts-ignore
+      // @ts-ignore
       const activeNode = layerRef.current.findOne(`#${updatedSprite.id}`);
-      console.log({ scaleFactor });
       let activeRect = activeNode.getClientRect();
       activeRect.x = updatedSprite.x;
       activeRect.y = updatedSprite.y;
       for (let sprite of allSprites) {
         if (sprite.id !== updatedSprite.id) {
-          //@ts-ignore
+          // @ts-ignore
           const otherNode = layerRef.current.findOne(`#${sprite.id}`);
           const otherRect = otherNode.getClientRect();
           if (haveIntersection(activeRect, otherRect)) {
@@ -117,6 +122,60 @@ export default function SpriteContainer() {
 
     return { didCollide: false, otherSpriteId: null };
   }, []);
+  const handlCollision = useCallback(
+    (spriteone: sprite, spritetwo: sprite, spriteOneActions: activeAction[], spriteTwoActions: activeAction[]) => {
+      const updatedOneCopied = lodash.cloneDeep(spriteone);
+      const updateTwoCopied = lodash.cloneDeep(spritetwo);
+      for (let index = 0; index < spriteOneActions.length; index++) {
+        const element = spriteOneActions[index];
+        if (element.category === 'Move X Steps') {
+          updatedOneCopied.x += element.inputs[0];
+        } else if (element.category === 'Rotate X degree') {
+          updatedOneCopied.rotation = (updatedOneCopied.rotation || 0) + element.inputs[0];
+        } else if (element.category === 'Go To X and Y') {
+          updatedOneCopied.x = element.inputs[0];
+          updatedOneCopied.y = element.inputs[1];
+        } else if (element.category === 'Repeat Animation') {
+          updatedOneCopied.activeActions = spriteOneActions.slice(0, index);
+          executeActions(updatedOneCopied.activeActions, spriteOneActions, updatedOneCopied);
+          break;
+        }
+      }
+      for (let index = 0; index < spriteTwoActions.length; index++) {
+        const element = spriteTwoActions[index];
+        if (element.category === 'Move X Steps') {
+          updateTwoCopied.x += element.inputs[0];
+        } else if (element.category === 'Rotate X degree') {
+          updateTwoCopied.rotation = (updatedOneCopied.rotation || 0) + element.inputs[0];
+        } else if (element.category === 'Go To X and Y') {
+          updateTwoCopied.x = element.inputs[0];
+          updateTwoCopied.y = element.inputs[1];
+        } else if (element.category === 'Repeat Animation') {
+          updateTwoCopied.activeActions = spriteTwoActions.slice(0, index);
+          executeActions(updateTwoCopied.activeActions, spriteTwoActions, updateTwoCopied);
+          break;
+        }
+      }
+      if (updatedOneCopied.activeActions[0]?.category !== 'Repeat Animation') {
+        updatedOneCopied.activeActions = [];
+      }
+      if (updateTwoCopied.activeActions[0]?.category !== 'Repeat Animation') {
+        updateTwoCopied.activeActions = [];
+      }
+
+      setSprites((prev) =>
+        prev.map((s) =>
+          s.id === updatedOneCopied.id
+            ? { ...updatedOneCopied, collision: false }
+            : s.id === updateTwoCopied.id
+              ? { ...updateTwoCopied, collision: false }
+              : s
+        )
+      );
+    },
+    []
+  );
+
   const haveIntersection = useCallback((r1: IRect, r2: IRect) => {
     return !(
       r2.x > r1.x + Math.floor(r1.width) ||
@@ -131,7 +190,7 @@ export default function SpriteContainer() {
       let originalActions = [...copied.activeActions];
       executeActions(copied.activeActions, originalActions, copied);
     }
-  }, []);
+  }, [activeSprite]);
   return (
     <Stack>
       <Box sx={{ borderBottom: '1px solid hsl(0deg 0% 0% / 15%)', height: 'max-content' }} paddingInline={1}>
@@ -145,7 +204,7 @@ export default function SpriteContainer() {
           <Typography variant='subtitle1'>Sprite</Typography>
           {activeSprite?.name ? (
             <>
-              <Button onClick={playHandler}>
+              <Button onClick={() => playHandler()}>
                 <PlayCircleFilledOutlinedIcon />
               </Button>
               <Button>
@@ -196,26 +255,25 @@ export default function SpriteContainer() {
                           shadowColor='#9c7ade'
                           shadowBlur={15}
                           onDragMove={(e) => {
-                            const id = e.target.id();
-                            const rect = e.target.getClientRect();
-                            // const spriteOneActions = sprites.find((s) => s.id === id)?.activeActions;
-                            if (layerRef?.current != undefined) {
-                              setSprites((prevSprites) =>
-                                prevSprites.map((sprite) => {
-                                  if (sprite.id !== id) {
-                                    //@ts-ignore
-                                    const otherRect = layerRef?.current.findOne(`#${sprite.id}`).getClientRect();
-                                    console.log({ otherRect });
-                                    if (haveIntersection(rect, otherRect)) {
-                                      return { ...sprite, collision: true };
-                                    } else {
+                            lodash.debounce(() => {
+                              const id = e.target.id();
+                              const rect = e.target.getClientRect();
+                              if (layerRef?.current != undefined) {
+                                setSprites((prevSprites) =>
+                                  prevSprites.map((sprite) => {
+                                    if (sprite.id !== id) {
+                                      // @ts-ignore
+                                      const otherRect = layerRef?.current.findOne(`#${sprite.id}`).getClientRect();
+                                      if (haveIntersection(rect, otherRect)) {
+                                        return { ...sprite, collision: true };
+                                      }
                                       return { ...sprite, collision: false };
                                     }
-                                  }
-                                  return sprite;
-                                })
-                              );
-                            }
+                                    return sprite;
+                                  })
+                                );
+                              }
+                            }, 500);
                           }}
                           fill={s.collision ? 'red' : ''}
                         />

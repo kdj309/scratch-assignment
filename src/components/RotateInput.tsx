@@ -11,7 +11,7 @@ export default function RotateInput() {
       item: { category: 'Rotate X degree', inputs: [degreeValue] },
       collect(monitor) {
         return {
-          isDragging: !!monitor.isDragging(),
+          isDragging: Boolean(monitor.isDragging()),
         };
       },
     }),

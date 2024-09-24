@@ -23,14 +23,16 @@ export default function SpriteOptions() {
         const randomIndex = Math.floor(Math.random() * availableSprites.length);
         if (randomIndex < availableSprites.length) {
           const randomnormalsprite = availableSprites.filter((s) => !s.isStaged)[randomIndex];
-          let randomSprite: sprite;
-          if (randomnormalsprite.id === 'apple' && apple != undefined) {
-            randomSprite = getSpriteVersion(randomnormalsprite.id, apple, randomnormalsprite.name);
-          } else if (randomnormalsprite.id === 'boy' && boy != undefined) {
-            randomSprite = getSpriteVersion(randomnormalsprite.id, boy, randomnormalsprite.name);
+          if (randomnormalsprite) {
+            let randomSprite: sprite;
+            if (randomnormalsprite.id === 'apple' && apple != undefined) {
+              randomSprite = getSpriteVersion(randomnormalsprite.id, apple, randomnormalsprite.name);
+            } else if (randomnormalsprite.id === 'boy' && boy != undefined) {
+              randomSprite = getSpriteVersion(randomnormalsprite.id, boy, randomnormalsprite.name);
+            }
+            setSprites((prev) => [...prev.map((s) => ({ ...s, isActive: false })), randomSprite]);
+            setAvailableSprites((prev) => prev.map((s) => (s.id === randomSprite.id ? { ...s, isStaged: false } : s)));
           }
-          setSprites((prev) => [...prev.map((s) => ({ ...s, isActive: false })), randomSprite]);
-          setAvailableSprites((prev) => prev.map((s) => (s.id === randomSprite.id ? { ...s, isStaged: false } : s)));
         }
       },
     },

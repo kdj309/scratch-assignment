@@ -9,7 +9,7 @@ export default function RepeatAnimation() {
       item: { category: 'Repeat Animation', inputs: [] },
       collect(monitor) {
         return {
-          isDragging: !!monitor.isDragging(),
+          isDragging: Boolean(monitor.isDragging()),
         };
       },
     }),

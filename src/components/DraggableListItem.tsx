@@ -20,7 +20,7 @@ export default function DraggableListItem({
       },
       collect(monitor) {
         return {
-          isDragging: !!monitor.isDragging(),
+          isDragging: Boolean(monitor.isDragging()),
         };
       },
     };

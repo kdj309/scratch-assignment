@@ -12,7 +12,7 @@ export default function MoveToXandY() {
       item: { category: 'Go To X and Y', inputs: [xcount, ycount] },
       collect(monitor) {
         return {
-          isDragging: !!monitor.isDragging(),
+          isDragging: Boolean(monitor.isDragging()),
         };
       },
     }),

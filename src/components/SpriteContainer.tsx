@@ -207,9 +207,6 @@ export default function SpriteContainer() {
               <Button onClick={() => playHandler()}>
                 <PlayCircleFilledOutlinedIcon />
               </Button>
-              <Button>
-                <StopCircleOutlinedIcon></StopCircleOutlinedIcon>
-              </Button>
             </>
           ) : (
             <></>
